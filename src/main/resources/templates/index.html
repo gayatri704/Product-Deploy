@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="container center">
+    <h1>Product Mgt</h1>
+    <p>Spring Boot + JPA + Thymeleaf</p>
+
+    <a class="btn" href="/products">Product List</a>
+    <a class="btn" href="/products/new">Add Product</a>
+
+    <form action="/findProduct" method="post">
+        product-name: <input type="text" name="name">
+       <button type="submit">find</button>
+    </form>
+</div>
+</body>
+</html>

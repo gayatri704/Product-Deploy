@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Product List</h1>
+        <a class="btn" href="/">Home</a>
+        <a class="btn" href="/products/new">Add New Product</a>
+    </div>
+<table>
+    <thead>
+    <tr>
+        <th>Image</th>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Stock</th>
+        <th>Detail</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="product : ${products}">
+        <td>
+            <img th:if="${product.imageName != null}"
+                 th:src="@{/uploads/{img}(img=${product.imageName})}" width="100">
+        </td>
+        <td th:text="${product.name}"></td>
+        <td th:text="${product.price}"></td>
+        <td th:text="${product.stock}"></td>
+        <td>
+            <a class="small-btn" th:href="@{/products/{id}(id=${product.id})}">View</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
