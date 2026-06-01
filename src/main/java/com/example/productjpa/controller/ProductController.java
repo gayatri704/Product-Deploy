@@ -56,13 +56,12 @@ public class ProductController {
         return "product/list";
     }
 
-    @GetMapping("/products/{id}")
-    public String detail(@PathVariable Long id, Model model) {
-        return productService.findById(id)
-                .map(product -> {
-                    model.addAttribute("product", product);
-                    return "product/detail";
-                })
-                .orElse("redirect:/products");
+
+    //implement view
+    @GetMapping("/products/id")
+    public String detail(@PathVariable("id") long id, Model model) {
+        Product product = productService.findById(id);
+        model.addAttribute("product", product);
+        return "product/detail";
     }
 }

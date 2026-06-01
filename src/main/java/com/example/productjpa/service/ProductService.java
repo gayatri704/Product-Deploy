@@ -54,7 +54,8 @@ public class ProductService {
         return productRepository.findAllByNameContaining(name);
     }
 
-    public Optional<Product> findById(Long id) {
-        return productRepository.findById(id);
+    public Product findById(Long id) {
+       Product product = productRepository.findById(id).orElseThrow();
+        return product;
     }
 }
