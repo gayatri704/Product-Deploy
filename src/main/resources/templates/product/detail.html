@@ -8,15 +8,22 @@
 <body>
 <div class="container">
     <h1>Product Detail</h1>
-    <a class="btn" href="/products">Back to List</a>
-</div>
-<div th:if="${product != null}">
-    <img th:if="${product.imageName != null}"
-         th:src="@{/uploads/{img}(img=${product.imageName})}" width="200" alt="Product image">
-    <p><strong>Name:</strong> <span th:text="${product.name}"></span></p>
-    <p><strong>Price:</strong> <span th:text="${product.price}"></span></p>
-    <p><strong>Stock:</strong> <span th:text="${product.stock}"></span></p>
-    <p><strong>Description:</strong> <span th:text="${product.description}"></span></p>
+    <div style="margin-bottom: 20px;">
+        <a class="btn" href="/products">Back to List</a>
+    </div>
+    
+    <div th:if="${product != null}" class="product-info">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <img th:if="${product.imageName != null}"
+                 th:src="@{/uploads/{img}(img=${product.imageName})}" width="300" alt="Product image" style="border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        </div>
+        <div style="display: grid; grid-template-columns: 150px 1fr; gap: 10px; line-height: 1.6;">
+            <strong>Name:</strong> <span th:text="${product.name}"></span>
+            <strong>Price:</strong> <span th:text="${product.price}"></span>
+            <strong>Stock:</strong> <span th:text="${product.stock}"></span>
+            <strong>Description:</strong> <span th:text="${product.description}"></span>
+        </div>
+    </div>
 </div>
 </body>
 </html>

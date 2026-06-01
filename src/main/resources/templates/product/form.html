@@ -2,18 +2,31 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Product Form</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-<form th:action="@{/products}" method="post" enctype="multipart/form-data">
-  ProductName: <input type="text" name="name"><br>
-  Price: <input type="number" name="price"><br>
-  Stock: <input type="number" name="stock"><br>
-  Description: <textarea name="description"></textarea>
-  Image : <input type="file" name="imageFile" accept="image/*">
-  <button type="submit">Save</button>
-</form>
-<a class="btn" href="/products">Go to List</a>
-
+<div class="container">
+    <h1>Product Form</h1>
+    <form th:action="@{/products}" method="post" enctype="multipart/form-data">
+        <label>Product Name:</label>
+        <input type="text" name="name" required>
+        
+        <label>Price:</label>
+        <input type="number" name="price" step="0.01" required>
+        
+        <label>Stock:</label>
+        <input type="number" name="stock" required>
+        
+        <label>Description:</label>
+        <textarea name="description" rows="4"></textarea>
+        
+        <label>Image:</label>
+        <input type="file" name="imageFile" accept="image/*">
+        
+        <button type="submit">Save Product</button>
+    </form>
+    <a class="btn" href="/products" style="background-color: #95a5a6;">Cancel & Go to List</a>
+</div>
 </body>
 </html>

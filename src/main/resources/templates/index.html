@@ -2,18 +2,23 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Product Management</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-<h1>Product Mgt</h1>
-<p>Spring Boot + JPA + Thymeleaf</p>
+<div class="container">
+    <h1>Product Mgt</h1>
+    <p>Spring Boot + JPA + Thymeleaf</p>
 
-<a href="/products">Product List</a>
-<a href="/products/new">Add Product</a>
+    <div style="margin-bottom: 20px;">
+        <a class="btn" href="/products">Product List</a>
+        <a class="btn" href="/products/new">Add Product</a>
+    </div>
 
-<form action="/findProduct" method="post">
-    produt-name: <input type="text" name="name">
-    <button type="submit">find</button>
-</form>
+    <form action="/findProduct" method="post" class="search-form">
+        <input type="text" name="name" placeholder="Search product by name...">
+        <button type="submit">Find</button>
+    </form>
+</div>
 </body>
 </html>
