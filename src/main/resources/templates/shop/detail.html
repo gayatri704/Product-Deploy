@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${product.name} + ' — ShopVerse'">Product</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="page-content">
+    <nav class="breadcrumb">
+        <a th:href="@{/shop}">Shop</a>
+        <span>/</span>
+        <span th:text="${product.name}">Product</span>
+    </nav>
+
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+    <div class="detail-layout">
+        <div class="detail-gallery">
+            <img th:if="${product.imageName != null}"
+                 th:src="@{/uploads/{img}(img=${product.imageName})}"
+                 th:alt="${product.name}">
+            <div th:unless="${product.imageName != null}" class="no-image large">No image available</div>
+        </div>
+
+        <div class="detail-info">
+            <span class="category-tag large" th:if="${product.category != null}" th:text="${product.category}">Category</span>
+            <h1 th:text="${product.name}">Product Name</h1>
+            <p class="detail-price" th:text="'$' + ${product.price}">$0</p>
+
+            <p class="stock-info" th:classappend="${product.stock > 0} ? ' in-stock' : ' out-of-stock'">
+                <span th:if="${product.stock > 0}" th:text="${product.stock} + ' items available'">In stock</span>
+                <span th:unless="${product.stock > 0}">Out of stock</span>
+            </p>
+
+            <p class="detail-description" th:text="${product.description ?: 'No description provided.'}">Description</p>
+
+            <div class="detail-actions" th:if="${product.stock > 0}">
+                <form sec:authorize="isAuthenticated()" th:action="@{/cart/add}" method="post" class="add-to-cart-form">
+                    <input type="hidden" name="productId" th:value="${product.id}">
+                    <label for="quantity">Quantity</label>
+                    <div class="qty-row">
+                        <input id="quantity" type="number" name="quantity" value="1" min="1" th:max="${product.stock}">
+                        <button type="submit" class="btn btn-primary btn-lg">Add to Cart</button>
+                    </div>
+                </form>
+                <a sec:authorize="!isAuthenticated()" class="btn btn-primary btn-lg" th:href="@{/login}">Login to Purchase</a>
+            </div>
+
+            <div sec:authorize="hasRole('ADMIN')" class="admin-actions">
+                <a class="btn btn-outline btn-sm" th:href="@{/admin/products/{id}/edit(id=${product.id})}">Edit Product</a>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

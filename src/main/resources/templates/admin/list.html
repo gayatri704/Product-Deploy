@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — Products</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="page-content">
+    <div class="shop-header">
+        <div>
+            <h1>Product Management</h1>
+            <p class="subtitle">Create, read, update, and delete store products</p>
+        </div>
+        <a class="btn btn-primary" th:href="@{/admin/products/new}">+ Add Product</a>
+    </div>
+
+    <div th:if="${#lists.isEmpty(products)}" class="empty-state">
+        <h2>No products yet</h2>
+        <a class="btn btn-primary" th:href="@{/admin/products/new}">Add your first product</a>
+    </div>
+
+    <div th:unless="${#lists.isEmpty(products)}" class="admin-table-wrap">
+        <table class="admin-table">
+            <thead>
+            <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="product : ${products}">
+                <td>
+                    <img th:if="${product.imageName != null}"
+                         class="table-thumb"
+                         th:src="@{/uploads/{img}(img=${product.imageName})}"
+                         th:alt="${product.name}">
+                </td>
+                <td th:text="${product.name}">Name</td>
+                <td><span class="category-tag" th:text="${product.category ?: 'General'}">Cat</span></td>
+                <td th:text="'$' + ${product.price}">$0</td>
+                <td th:text="${product.stock}">0</td>
+                <td class="table-actions">
+                    <a class="btn btn-outline btn-sm" th:href="@{/shop/{id}(id=${product.id})}">View</a>
+                    <a class="btn btn-primary btn-sm" th:href="@{/admin/products/{id}/edit(id=${product.id})}">Edit</a>
+                    <form th:action="@{/admin/products/{id}/delete(id=${product.id})}"
+                          method="post" class="inline-form"
+                          onsubmit="return confirm('Delete this product?');">
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

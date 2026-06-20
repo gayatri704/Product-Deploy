@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout — ShopVerse</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="page-content">
+    <h1>Checkout</h1>
+
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+    <div class="checkout-layout">
+        <form th:action="@{/checkout}" method="post" class="checkout-form card-form">
+            <h2>Shipping Details</h2>
+            <label for="shippingAddress">Delivery Address</label>
+            <textarea id="shippingAddress" name="shippingAddress" rows="4" required
+                      placeholder="Street, City, State, ZIP Code"></textarea>
+            <button type="submit" class="btn btn-primary btn-lg btn-block">Place Order</button>
+        </form>
+
+        <aside class="cart-summary">
+            <h2>Your Order</h2>
+            <div class="checkout-items">
+                <div class="checkout-item" th:each="item : ${cartItems}">
+                    <span th:text="${item.product.name} + ' x' + ${item.quantity}">Item</span>
+                    <strong th:text="'$' + (${item.product.price} * ${item.quantity})">$0</strong>
+                </div>
+            </div>
+            <div class="summary-row total">
+                <span>Total</span>
+                <strong th:text="'$' + ${cartTotal}">$0</strong>
+            </div>
+        </aside>
+    </div>
+</main>
+</body>
+</html>

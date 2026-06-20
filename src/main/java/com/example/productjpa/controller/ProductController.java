@@ -22,73 +22,92 @@ public class ProductController {
         return "index";
     }
 
-    @GetMapping("/products")
-    public String list(@RequestParam(value = "keyword", required = false) String keyword, Model model) {
+    @GetMapping("/shop")
+    public String shop(
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(value = "category", required = false) String category,
+            Model model) {
+        model.addAttribute("products", productService.search(keyword, category));
+        model.addAttribute("categories", ProductService.CATEGORIES);
         if (keyword != null && !keyword.isBlank()) {
-            model.addAttribute("products", productService.searchByKeyword(keyword));
             model.addAttribute("keyword", keyword.trim());
-        } else {
-            model.addAttribute("products", productService.findAll());
         }
-        return "product/list";
+        if (category != null && !category.isBlank()) {
+            model.addAttribute("category", category.trim());
+        }
+        return "shop/list";
     }
 
-    @GetMapping("/products/new")
+    @GetMapping("/shop/{id}")
+    public String detail(@PathVariable("id") long id, Model model) {
+        model.addAttribute("product", productService.findById(id));
+        return "shop/detail";
+    }
+
+    @GetMapping("/admin/products")
+    public String adminList(Model model) {
+        model.addAttribute("products", productService.findAll());
+        return "admin/list";
+    }
+
+    @GetMapping("/admin/products/new")
     public String newForm(Model model) {
         model.addAttribute("product", new Product());
+        model.addAttribute("categories", ProductService.CATEGORIES);
         model.addAttribute("isEdit", false);
-        return "product/form";
+        return "admin/form";
     }
 
-    @PostMapping("/products")
+    @PostMapping("/admin/products")
     public String create(
             @RequestParam String name,
             @RequestParam(defaultValue = "0") int price,
             @RequestParam(defaultValue = "0") int stock,
             @RequestParam(required = false) String description,
+            @RequestParam(required = false) String category,
             @RequestParam(value = "imageFile", required = false) MultipartFile imageFile) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(price);
-        product.setStock(stock);
-        product.setDescription(description != null ? description : "");
+        Product product = Product.builder()
+                .name(name)
+                .price(price)
+                .stock(stock)
+                .description(description != null ? description : "")
+                .category(category)
+                .build();
         productService.addProduct(product, imageFile);
-        return "redirect:/products";
+        return "redirect:/admin/products";
     }
 
-    @GetMapping("/products/{id}")
-    public String detail(@PathVariable("id") long id, Model model) {
-        model.addAttribute("product", productService.findById(id));
-        return "product/detail";
-    }
-
-    @GetMapping("/products/{id}/edit")
+    @GetMapping("/admin/products/{id}/edit")
     public String editForm(@PathVariable("id") long id, Model model) {
         model.addAttribute("product", productService.findById(id));
+        model.addAttribute("categories", ProductService.CATEGORIES);
         model.addAttribute("isEdit", true);
-        return "product/form";
+        return "admin/form";
     }
 
-    @PostMapping("/products/{id}")
+    @PostMapping("/admin/products/{id}")
     public String update(
             @PathVariable("id") long id,
             @RequestParam String name,
             @RequestParam(defaultValue = "0") int price,
             @RequestParam(defaultValue = "0") int stock,
             @RequestParam(required = false) String description,
+            @RequestParam(required = false) String category,
             @RequestParam(value = "imageFile", required = false) MultipartFile imageFile) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(price);
-        product.setStock(stock);
-        product.setDescription(description != null ? description : "");
+        Product product = Product.builder()
+                .name(name)
+                .price(price)
+                .stock(stock)
+                .description(description != null ? description : "")
+                .category(category)
+                .build();
         productService.updateProduct(id, product, imageFile);
-        return "redirect:/products/" + id;
+        return "redirect:/admin/products";
     }
 
-    @PostMapping("/products/{id}/delete")
+    @PostMapping("/admin/products/{id}/delete")
     public String delete(@PathVariable("id") long id) {
         productService.deleteProduct(id);
-        return "redirect:/products";
+        return "redirect:/admin/products";
     }
 }

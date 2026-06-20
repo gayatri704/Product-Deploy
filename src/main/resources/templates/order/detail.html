@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'Order #' + ${order.id} + ' — ShopVerse'">Order</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="page-content">
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+    <div class="order-confirmation">
+        <div class="confirmation-icon">&#10003;</div>
+        <h1 th:text="'Order #' + ${order.id}">Order</h1>
+        <p class="subtitle">Thank you for your purchase!</p>
+    </div>
+
+    <div class="order-detail-grid">
+        <div class="card-form">
+            <h2>Order Info</h2>
+            <dl class="detail-list">
+                <dt>Status</dt>
+                <dd><span class="status-badge" th:text="${order.status}">Status</span></dd>
+                <dt>Date</dt>
+                <dd th:text="${#temporals.format(order.createdAt, 'MMM dd, yyyy HH:mm')}">Date</dd>
+                <dt>Shipping Address</dt>
+                <dd th:text="${order.shippingAddress}">Address</dd>
+                <dt>Total</dt>
+                <dd class="detail-price" th:text="'$' + ${order.totalAmount}">$0</dd>
+            </dl>
+        </div>
+
+        <div class="card-form">
+            <h2>Items</h2>
+            <div class="checkout-items">
+                <div class="checkout-item" th:each="item : ${order.items}">
+                    <div class="checkout-item-detail">
+                        <strong th:text="${item.product.name}">Product</strong>
+                        <span th:text="'Qty: ' + ${item.quantity} + ' @ $' + ${item.priceAtPurchase}">Qty</span>
+                    </div>
+                    <strong th:text="'$' + (${item.priceAtPurchase} * ${item.quantity})">$0</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <a class="btn btn-primary" th:href="@{/shop}">Continue Shopping</a>
+        <a class="btn btn-ghost" th:href="@{/orders}">All Orders</a>
+    </div>
+</main>
+</body>
+</html>

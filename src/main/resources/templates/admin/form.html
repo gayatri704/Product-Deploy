@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${isEdit} ? 'Edit Product' : 'Add Product'">Product Form</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="page-content page-narrow">
+    <h1 th:text="${isEdit} ? 'Edit Product' : 'Add New Product'">Product Form</h1>
+    <p class="subtitle">Upload an image and fill in product details</p>
+
+    <form th:action="${isEdit} ? @{/admin/products/{id}(id=${product.id})} : @{/admin/products}"
+          method="post" enctype="multipart/form-data" class="product-form card-form">
+        <label for="name">Product Name</label>
+        <input id="name" type="text" name="name" th:value="${product.name}" required>
+
+        <div class="form-row">
+            <div>
+                <label for="price">Price ($)</label>
+                <input id="price" type="number" name="price" min="0" th:value="${product.price}" required>
+            </div>
+            <div>
+                <label for="stock">Stock</label>
+                <input id="stock" type="number" name="stock" min="0" th:value="${product.stock}" required>
+            </div>
+        </div>
+
+        <label for="category">Category</label>
+        <select id="category" name="category" required>
+            <option th:each="cat : ${categories}"
+                    th:value="${cat}"
+                    th:text="${cat}"
+                    th:selected="${product.category != null and product.category.equalsIgnoreCase(cat)}"></option>
+        </select>
+
+        <label for="description">Description</label>
+        <textarea id="description" name="description" rows="4" th:text="${product.description}"></textarea>
+
+        <label for="imageFile">Product Image</label>
+        <div th:if="${isEdit and product.imageName != null}" class="current-image">
+            <img th:src="@{/uploads/{img}(img=${product.imageName})}" alt="Current image" width="100">
+            <span>Upload a new file to replace the current image.</span>
+        </div>
+        <input id="imageFile" type="file" name="imageFile" accept="image/*">
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary" th:text="${isEdit} ? 'Update Product' : 'Save Product'">Save</button>
+            <a class="btn btn-ghost" th:href="@{/admin/products}">Cancel</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>

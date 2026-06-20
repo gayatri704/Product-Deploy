@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop — ShopVerse</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="page-content">
+    <div class="shop-header">
+        <div>
+            <h1>Our Store</h1>
+            <p class="subtitle" th:if="${keyword != null}">
+                Results for "<span th:text="${keyword}"></span>"
+                <span th:if="${category != null}"> in <span th:text="${category}"></span></span>
+            </p>
+            <p class="subtitle" th:unless="${keyword != null}">Browse our curated collection</p>
+        </div>
+        <span class="product-count" th:text="${#lists.size(products)} + ' products'">0 products</span>
+    </div>
+
+    <div class="shop-toolbar">
+        <form th:action="@{/shop}" method="get" class="search-form">
+            <input type="text" name="keyword" th:value="${keyword}" placeholder="Search by keyword...">
+            <select name="category">
+                <option value="">All Categories</option>
+                <option th:each="cat : ${categories}"
+                        th:value="${cat}"
+                        th:text="${cat}"
+                        th:selected="${category != null and category.equalsIgnoreCase(cat)}"></option>
+            </select>
+            <button type="submit" class="btn btn-primary">Search</button>
+            <a th:if="${keyword != null or category != null}" class="btn btn-ghost" th:href="@{/shop}">Clear</a>
+        </form>
+    </div>
+
+    <div th:if="${#lists.isEmpty(products)}" class="empty-state">
+        <div class="empty-icon">&#128722;</div>
+        <h2>No products found</h2>
+        <p>Try a different search or browse all categories.</p>
+        <a class="btn btn-primary" th:href="@{/shop}">Browse All</a>
+    </div>
+
+    <div th:unless="${#lists.isEmpty(products)}" class="product-grid">
+        <article class="product-card" th:each="product : ${products}">
+            <a class="product-image-link" th:href="@{/shop/{id}(id=${product.id})}">
+                <div class="product-image">
+                    <img th:if="${product.imageName != null}"
+                         th:src="@{/uploads/{img}(img=${product.imageName})}"
+                         th:alt="${product.name}">
+                    <div th:unless="${product.imageName != null}" class="no-image">No image</div>
+                    <span class="category-tag" th:if="${product.category != null}" th:text="${product.category}">Cat</span>
+                </div>
+            </a>
+            <div class="product-body">
+                <h3><a th:href="@{/shop/{id}(id=${product.id})}" th:text="${product.name}">Product</a></h3>
+                <p class="product-desc" th:text="${product.description}">Description</p>
+                <div class="product-meta">
+                    <span class="product-price" th:text="'$' + ${product.price}">$0</span>
+                    <span class="stock-badge" th:classappend="${product.stock > 0} ? ' in-stock' : ' out-of-stock'"
+                          th:text="${product.stock > 0} ? 'In Stock' : 'Sold Out'">Stock</span>
+                </div>
+                <div class="product-actions">
+                    <a class="btn btn-outline btn-sm" th:href="@{/shop/{id}(id=${product.id})}">View</a>
+                    <form sec:authorize="isAuthenticated()" th:if="${product.stock > 0}"
+                          th:action="@{/cart/add}" method="post" class="inline-form">
+                        <input type="hidden" name="productId" th:value="${product.id}">
+                        <input type="hidden" name="quantity" value="1">
+                        <button type="submit" class="btn btn-primary btn-sm">Add to Cart</button>
+                    </form>
+                    <a sec:authorize="!isAuthenticated()" class="btn btn-primary btn-sm" th:href="@{/login}">Login to Buy</a>
+                </div>
+            </div>
+        </article>
+    </div>
+</main>
+
+<footer class="site-footer">
+    <p>&copy; 2026 ShopVerse E-Commerce</p>
+</footer>
+</body>
+</html>

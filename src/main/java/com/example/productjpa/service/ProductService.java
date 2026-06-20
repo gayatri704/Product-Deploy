@@ -14,9 +14,14 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
+
+    public static final List<String> CATEGORIES = List.of(
+            "Electronics", "Fashion", "Home", "Sports", "Books", "Beauty"
+    );
 
     private final Path uploadDir = Paths.get(System.getProperty("user.dir"), "uploads")
             .toAbsolutePath()
@@ -29,7 +34,29 @@ public class ProductService {
         return productRepository.findAll();
     }
 
+    public List<Product> search(String keyword, String category) {
+        List<Product> products;
+        if (keyword != null && !keyword.isBlank()) {
+            String trimmed = keyword.trim();
+            products = productRepository.findAllByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+                    trimmed, trimmed);
+        } else {
+            products = findAll();
+        }
+
+        if (category != null && !category.isBlank() && !"All".equalsIgnoreCase(category)) {
+            String cat = category.trim();
+            products = products.stream()
+                    .filter(p -> p.getCategory() != null && p.getCategory().equalsIgnoreCase(cat))
+                    .collect(Collectors.toList());
+        }
+        return products;
+    }
+
     public void addProduct(Product product, MultipartFile imageFile) {
+        if (product.getCategory() == null || product.getCategory().isBlank()) {
+            product.setCategory("General");
+        }
         storeImageIfPresent(product, imageFile);
         productRepository.save(product);
     }
@@ -40,6 +67,7 @@ public class ProductService {
         existing.setPrice(updated.getPrice());
         existing.setStock(updated.getStock());
         existing.setDescription(updated.getDescription());
+        existing.setCategory(updated.getCategory());
         storeImageIfPresent(existing, imageFile);
         productRepository.save(existing);
     }
@@ -50,13 +78,13 @@ public class ProductService {
         productRepository.delete(product);
     }
 
-    public List<Product> searchByKeyword(String keyword) {
-        if (keyword == null || keyword.isBlank()) {
-            return findAll();
+    public void reduceStock(Long productId, int quantity) {
+        Product product = findById(productId);
+        if (product.getStock() < quantity) {
+            throw new IllegalArgumentException("Not enough stock for " + product.getName());
         }
-        String trimmed = keyword.trim();
-        return productRepository.findAllByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
-                trimmed, trimmed);
+        product.setStock(product.getStock() - quantity);
+        productRepository.save(product);
     }
 
     public Product findById(Long id) {

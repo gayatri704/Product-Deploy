@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders — ShopVerse</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="page-content">
+    <h1>My Orders</h1>
+    <p class="subtitle">Track your purchase history</p>
+
+    <div th:if="${#lists.isEmpty(orders)}" class="empty-state">
+        <h2>No orders yet</h2>
+        <a class="btn btn-primary" th:href="@{/shop}">Start Shopping</a>
+    </div>
+
+    <div th:unless="${#lists.isEmpty(orders)}" class="orders-list">
+        <div class="order-card" th:each="order : ${orders}">
+            <div class="order-header">
+                <div>
+                    <strong th:text="'Order #' + ${order.id}">Order</strong>
+                    <span class="order-date" th:text="${#temporals.format(order.createdAt, 'MMM dd, yyyy HH:mm')}">Date</span>
+                </div>
+                <span class="status-badge" th:text="${order.status}">Status</span>
+            </div>
+            <p class="order-address" th:text="${order.shippingAddress}">Address</p>
+            <div class="order-footer">
+                <strong th:text="'Total: $' + ${order.totalAmount}">$0</strong>
+                <a class="btn btn-outline btn-sm" th:href="@{/orders/{id}(id=${order.id})}">View Details</a>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

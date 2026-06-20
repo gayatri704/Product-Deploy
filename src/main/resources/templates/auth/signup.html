@@ -3,16 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up</title>
+    <title>Sign Up — ShopVerse</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="auth-page">
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-<div class="container container-narrow">
-    <div class="auth-card">
-        <h1>Create Account</h1>
-        <p class="subtitle">Join to create and manage products</p>
+<div class="auth-container">
+    <div class="auth-card card-form">
+        <div class="auth-header">
+            <span class="logo-icon">&#9670;</span>
+            <h1>Join ShopVerse</h1>
+            <p class="subtitle">Create an account to start shopping</p>
+        </div>
 
         <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
 
@@ -29,12 +33,11 @@
             <label for="confirmPassword">Confirm Password</label>
             <input id="confirmPassword" type="password" name="confirmPassword" minlength="6" required>
 
-            <button type="submit" class="btn btn-block">Sign Up</button>
+            <button type="submit" class="btn btn-primary btn-block btn-lg">Create Account</button>
         </form>
 
         <p class="auth-footer">
-            Already have an account?
-            <a th:href="@{/login}">Sign in</a>
+            Already have an account? <a th:href="@{/login}">Sign in</a>
         </p>
     </div>
 </div>

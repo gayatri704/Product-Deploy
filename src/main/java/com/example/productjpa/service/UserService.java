@@ -1,6 +1,7 @@
 package com.example.productjpa.service;
 
 import com.example.productjpa.entity.User;
+import com.example.productjpa.entity.UserRole;
 import com.example.productjpa.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,23 +27,30 @@ public class UserService implements UserDetailsService {
             throw new IllegalArgumentException("Email is already registered");
         }
 
+        UserRole role = userRepository.count() == 0 ? UserRole.ADMIN : UserRole.CUSTOMER;
+
         User user = User.builder()
                 .username(username)
                 .email(email)
                 .password(passwordEncoder.encode(rawPassword))
+                .role(role)
                 .build();
         userRepository.save(user);
     }
 
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+        User user = findByUsername(username);
 
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getUsername())
                 .password(user.getPassword())
-                .roles("USER")
+                .roles(user.getRole().name())
                 .build();
     }
 }

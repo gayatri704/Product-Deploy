@@ -4,40 +4,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Catalog</title>
+    <title>ShopVerse — Modern E-Commerce</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-<div class="container">
-    <div class="hero">
-        <h1>Product Management System</h1>
-        <p class="subtitle">Spring Boot + JPA + PostgreSQL + Thymeleaf</p>
-    </div>
-
-    <div class="feature-grid">
-        <div class="feature-card">
-            <h3>Browse Products</h3>
-            <p>View all products with images, prices, and stock levels.</p>
-            <a class="btn" th:href="@{/products}">View Products</a>
-        </div>
-        <div class="feature-card" sec:authorize="isAuthenticated()">
-            <h3>Manage Inventory</h3>
-            <p>Create, update, and delete products with image uploads.</p>
-            <a class="btn" th:href="@{/products/new}">Add Product</a>
-        </div>
-        <div class="feature-card" sec:authorize="!isAuthenticated()">
-            <h3>Get Started</h3>
-            <p>Sign up or log in to create and manage your product catalog.</p>
-            <a class="btn" th:href="@{/signup}">Sign Up Free</a>
+<section class="hero">
+    <div class="hero-content">
+        <span class="hero-badge">New Season Collection</span>
+        <h1>Discover Products You'll Love</h1>
+        <p>Shop electronics, fashion, home goods and more. Secure checkout, fast search, and beautiful product listings.</p>
+        <div class="hero-actions">
+            <a class="btn btn-primary btn-lg" th:href="@{/shop}">Start Shopping</a>
+            <a sec:authorize="!isAuthenticated()" class="btn btn-outline btn-lg" th:href="@{/signup}">Create Account</a>
         </div>
     </div>
+    <div class="hero-visual">
+        <div class="hero-card hero-card-1">
+            <span>Free Shipping</span>
+            <strong>On orders $50+</strong>
+        </div>
+        <div class="hero-card hero-card-2">
+            <span>Secure Pay</span>
+            <strong>Safe checkout</strong>
+        </div>
+        <div class="hero-card hero-card-3">
+            <span>24/7 Shop</span>
+            <strong>Browse anytime</strong>
+        </div>
+    </div>
+</section>
 
-    <form th:action="@{/products}" method="get" class="search-form">
-        <input type="text" name="keyword" placeholder="Search by name or description...">
-        <button type="submit">Search</button>
-    </form>
-</div>
+<section class="section">
+    <div class="section-header">
+        <h2>Shop by Category</h2>
+        <a th:href="@{/shop}">View all &rarr;</a>
+    </div>
+    <div class="category-grid">
+        <a th:each="cat : ${ {'Electronics','Fashion','Home','Sports','Books','Beauty'} }"
+           class="category-chip"
+           th:href="@{/shop(category=${cat})}"
+           th:text="${cat}">Category</a>
+    </div>
+</section>
+
+<section class="section features-section">
+    <div class="features-grid">
+        <div class="feature-box">
+            <div class="feature-icon">&#128274;</div>
+            <h3>Secure Auth</h3>
+            <p>Sign up, login, and logout with encrypted passwords.</p>
+        </div>
+        <div class="feature-box">
+            <div class="feature-icon">&#128230;</div>
+            <h3>Full CRUD</h3>
+            <p>Admins manage products with create, read, update, delete.</p>
+        </div>
+        <div class="feature-box">
+            <div class="feature-icon">&#128247;</div>
+            <h3>Image Upload</h3>
+            <p>Upload and display product images beautifully.</p>
+        </div>
+        <div class="feature-box">
+            <div class="feature-icon">&#128269;</div>
+            <h3>Smart Search</h3>
+            <p>Find products instantly by keyword or category.</p>
+        </div>
+    </div>
+</section>
+
+<footer class="site-footer">
+    <p>&copy; 2026 ShopVerse. Spring Boot + JPA + PostgreSQL E-Commerce App.</p>
+</footer>
 </body>
 </html>
