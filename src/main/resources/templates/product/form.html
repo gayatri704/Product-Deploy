@@ -2,31 +2,45 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Product Form</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${isEdit} ? 'Edit Product' : 'Add Product'">Product Form</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
 <div class="container">
-    <h1>Product Form</h1>
-    <form th:action="@{/products}" method="post" enctype="multipart/form-data">
-        <label>Product Name:</label>
-        <input type="text" name="name" required>
-        
-        <label>Price:</label>
-        <input type="number" name="price" step="0.01" required>
-        
-        <label>Stock:</label>
-        <input type="number" name="stock" required>
-        
-        <label>Description:</label>
-        <textarea name="description" rows="4"></textarea>
-        
-        <label>Image:</label>
-        <input type="file" name="imageFile" accept="image/*">
-        
-        <button type="submit">Save Product</button>
+    <h1 th:text="${isEdit} ? 'Edit Product' : 'Add Product'">Product Form</h1>
+
+    <form th:action="${isEdit} ? @{/products/{id}(id=${product.id})} : @{/products}"
+          method="post"
+          enctype="multipart/form-data"
+          class="product-form">
+        <label for="name">Product Name</label>
+        <input id="name" type="text" name="name" th:value="${product.name}" required>
+
+        <label for="price">Price ($)</label>
+        <input id="price" type="number" name="price" min="0" th:value="${product.price}" required>
+
+        <label for="stock">Stock</label>
+        <input id="stock" type="number" name="stock" min="0" th:value="${product.stock}" required>
+
+        <label for="description">Description</label>
+        <textarea id="description" name="description" rows="4" th:text="${product.description}"></textarea>
+
+        <label for="imageFile">Image</label>
+        <div th:if="${isEdit and product.imageName != null}" class="current-image">
+            <img th:src="@{/uploads/{img}(img=${product.imageName})}" alt="Current product image" width="120">
+            <span>Upload a new file to replace the current image.</span>
+        </div>
+        <input id="imageFile" type="file" name="imageFile" accept="image/*">
+
+        <div class="form-actions">
+            <button type="submit" class="btn" th:text="${isEdit} ? 'Update Product' : 'Save Product'">Save</button>
+            <a class="btn btn-secondary"
+               th:href="${isEdit} ? @{/products/{id}(id=${product.id})} : @{/products}">Cancel</a>
+        </div>
     </form>
-    <a class="btn" href="/products" style="background-color: #95a5a6;">Cancel & Go to List</a>
 </div>
 </body>
 </html>

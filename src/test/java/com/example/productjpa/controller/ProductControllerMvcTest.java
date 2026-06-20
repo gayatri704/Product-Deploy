@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -29,6 +31,7 @@ class ProductControllerMvcTest {
     private ProductService productService;
 
     @Test
+    @WithMockUser
     void createProductPassesNonEmptyMultipartFile() throws Exception {
         MockMultipartFile image = new MockMultipartFile(
                 "imageFile", "photo.png", MediaType.IMAGE_PNG_VALUE, new byte[]{1, 2, 3});
@@ -38,7 +41,8 @@ class ProductControllerMvcTest {
                         .param("name", "Widget")
                         .param("price", "9")
                         .param("stock", "2")
-                        .param("description", "Test"))
+                        .param("description", "Test")
+                        .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/products"));
 

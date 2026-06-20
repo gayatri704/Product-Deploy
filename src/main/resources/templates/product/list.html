@@ -1,43 +1,61 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product List</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-    <div class="container">
-        <h1>Product List</h1>
-        <div style="margin-bottom: 20px;">
-            <a class="btn" href="/">Home</a>
-            <a class="btn" href="/products/new">Add New Product</a>
-        </div>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
 
-        <table>
-            <thead>
-            <tr>
-                <th>Image</th>
-                <th>Name</th>
-                <th>Price</th>
-                <th>Stock</th>
-                <th>Detail</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="product : ${products}">
-                <td>
-                    <img th:if="${product.imageName != null}"
-                         th:src="@{/uploads/{img}(img=${product.imageName})}" width="100" style="border-radius: 4px;">
-                </td>
-                <td th:text="${product.name}"></td>
-                <td th:text="${product.price}"></td>
-                <td th:text="${product.stock}"></td>
-                <td>
-                    <a class="small-btn" th:href="@{/products/{id}(id=${product.id})}">View</a>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+<div class="container container-wide">
+    <div class="page-header">
+        <h1>Product List</h1>
+        <a sec:authorize="isAuthenticated()" class="btn" th:href="@{/products/new}">Add New Product</a>
     </div>
+
+    <form th:action="@{/products}" method="get" class="search-form">
+        <input type="text" name="keyword" th:value="${keyword}" placeholder="Search by keyword...">
+        <button type="submit">Search</button>
+        <a th:if="${keyword}" class="btn btn-secondary" th:href="@{/products}">Clear</a>
+    </form>
+
+    <div th:if="${#lists.isEmpty(products)}" class="empty-state">
+        <p th:if="${keyword}">No products found for "<span th:text="${keyword}"></span>".</p>
+        <p th:unless="${keyword}">No products yet.</p>
+        <a sec:authorize="isAuthenticated()" class="btn" th:href="@{/products/new}">Add your first product</a>
+    </div>
+
+    <div th:unless="${#lists.isEmpty(products)}" class="product-grid">
+        <div class="product-card" th:each="product : ${products}">
+            <div class="product-image">
+                <img th:if="${product.imageName != null}"
+                     th:src="@{/uploads/{img}(img=${product.imageName})}"
+                     th:alt="${product.name}">
+                <div th:unless="${product.imageName != null}" class="no-image">No image</div>
+            </div>
+            <div class="product-body">
+                <h3 th:text="${product.name}">Product</h3>
+                <p class="product-price" th:text="'$' + ${product.price}">$0</p>
+                <p class="product-stock" th:text="'Stock: ' + ${product.stock}">Stock: 0</p>
+                <p class="product-desc" th:text="${product.description}">Description</p>
+                <div class="product-actions">
+                    <a class="small-btn" th:href="@{/products/{id}(id=${product.id})}">View</a>
+                    <a sec:authorize="isAuthenticated()" class="small-btn btn-edit"
+                       th:href="@{/products/{id}/edit(id=${product.id})}">Edit</a>
+                    <form sec:authorize="isAuthenticated()"
+                          th:action="@{/products/{id}/delete(id=${product.id})}"
+                          method="post"
+                          class="inline-form"
+                          onsubmit="return confirm('Delete this product?');">
+                        <button type="submit" class="small-btn btn-delete">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

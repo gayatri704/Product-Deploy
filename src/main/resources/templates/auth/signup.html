@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container container-narrow">
+    <div class="auth-card">
+        <h1>Create Account</h1>
+        <p class="subtitle">Join to create and manage products</p>
+
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+        <form th:action="@{/signup}" method="post" class="auth-form">
+            <label for="username">Username</label>
+            <input id="username" type="text" name="username" required autofocus>
+
+            <label for="email">Email</label>
+            <input id="email" type="email" name="email" required>
+
+            <label for="password">Password</label>
+            <input id="password" type="password" name="password" minlength="6" required>
+
+            <label for="confirmPassword">Confirm Password</label>
+            <input id="confirmPassword" type="password" name="confirmPassword" minlength="6" required>
+
+            <button type="submit" class="btn btn-block">Sign Up</button>
+        </form>
+
+        <p class="auth-footer">
+            Already have an account?
+            <a th:href="@{/login}">Sign in</a>
+        </p>
+    </div>
+</div>
+</body>
+</html>

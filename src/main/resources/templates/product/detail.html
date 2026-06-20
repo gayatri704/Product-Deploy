@@ -1,27 +1,49 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Detail</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
 <div class="container">
-    <h1>Product Detail</h1>
-    <div style="margin-bottom: 20px;">
-        <a class="btn" href="/products">Back to List</a>
-    </div>
-    
-    <div th:if="${product != null}" class="product-info">
-        <div style="text-align: center; margin-bottom: 20px;">
-            <img th:if="${product.imageName != null}"
-                 th:src="@{/uploads/{img}(img=${product.imageName})}" width="300" alt="Product image" style="border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+    <div class="page-header">
+        <h1>Product Detail</h1>
+        <div class="header-actions">
+            <a class="btn btn-secondary" th:href="@{/products}">Back to List</a>
+            <a sec:authorize="isAuthenticated()" class="btn"
+               th:href="@{/products/{id}/edit(id=${product.id})}">Edit</a>
+            <form sec:authorize="isAuthenticated()"
+                  th:action="@{/products/{id}/delete(id=${product.id})}"
+                  method="post"
+                  class="inline-form"
+                  onsubmit="return confirm('Delete this product?');">
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
         </div>
-        <div style="display: grid; grid-template-columns: 150px 1fr; gap: 10px; line-height: 1.6;">
-            <strong>Name:</strong> <span th:text="${product.name}"></span>
-            <strong>Price:</strong> <span th:text="${product.price}"></span>
-            <strong>Stock:</strong> <span th:text="${product.stock}"></span>
-            <strong>Description:</strong> <span th:text="${product.description}"></span>
+    </div>
+
+    <div th:if="${product != null}" class="detail-layout">
+        <div class="detail-image">
+            <img th:if="${product.imageName != null}"
+                 th:src="@{/uploads/{img}(img=${product.imageName})}"
+                 th:alt="${product.name}">
+            <div th:unless="${product.imageName != null}" class="no-image large">No image available</div>
+        </div>
+        <div class="detail-info">
+            <h2 th:text="${product.name}">Product Name</h2>
+            <dl>
+                <dt>Price</dt>
+                <dd th:text="'$' + ${product.price}">$0</dd>
+                <dt>Stock</dt>
+                <dd th:text="${product.stock}">0</dd>
+                <dt>Description</dt>
+                <dd th:text="${product.description ?: 'No description provided.'}">Description</dd>
+            </dl>
         </div>
     </div>
 </div>

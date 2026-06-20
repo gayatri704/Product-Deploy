@@ -1,23 +1,42 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Product Management</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Catalog</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<div class="container">
-    <h1>Product Mgt</h1>
-    <p>Spring Boot + JPA + Thymeleaf</p>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
 
-    <div style="margin-bottom: 20px;">
-        <a class="btn" href="/products">Product List</a>
-        <a class="btn" href="/products/new">Add Product</a>
+<div class="container">
+    <div class="hero">
+        <h1>Product Management System</h1>
+        <p class="subtitle">Spring Boot + JPA + PostgreSQL + Thymeleaf</p>
     </div>
 
-    <form action="/findProduct" method="post" class="search-form">
-        <input type="text" name="name" placeholder="Search product by name...">
-        <button type="submit">Find</button>
+    <div class="feature-grid">
+        <div class="feature-card">
+            <h3>Browse Products</h3>
+            <p>View all products with images, prices, and stock levels.</p>
+            <a class="btn" th:href="@{/products}">View Products</a>
+        </div>
+        <div class="feature-card" sec:authorize="isAuthenticated()">
+            <h3>Manage Inventory</h3>
+            <p>Create, update, and delete products with image uploads.</p>
+            <a class="btn" th:href="@{/products/new}">Add Product</a>
+        </div>
+        <div class="feature-card" sec:authorize="!isAuthenticated()">
+            <h3>Get Started</h3>
+            <p>Sign up or log in to create and manage your product catalog.</p>
+            <a class="btn" th:href="@{/signup}">Sign Up Free</a>
+        </div>
+    </div>
+
+    <form th:action="@{/products}" method="get" class="search-form">
+        <input type="text" name="keyword" placeholder="Search by name or description...">
+        <button type="submit">Search</button>
     </form>
 </div>
 </body>
